@@ -18,14 +18,14 @@
 }
 
 .titulo-forms{
-  color: #e9d5ca;
+  color: #B3E8E5;
   font-size: 28px;
   margin-bottom: 0px;
   margin-top: 0px;
 }
 
 .input-forms{
-  background-color: #e9d5ca;
+  background-color: #b3e8e5;
   font-size: 14px;
   border-style: none;
   border-radius: 10px;
@@ -37,18 +37,18 @@
 
 .input-forms:focus{
   outline: none;
-  background-color: #d3c1b8;
+  background-color: #79DAE8;
 }	
 
 .label-forms{
-  color: #CDC2AE;
+  color: #C4DDFF;
   margin-top: 2%;
   margin-bottom: 0px;
   font-size: 18px;
 }
 
 .button-forms{
-  background-color: #9A86A4;
+  background-color: #A85CF9;
   color: white;
   font-weight: 600;
   width: 35%;
@@ -63,7 +63,7 @@
 
 .button-forms:hover{
   cursor: pointer;
-  background-color: #8A7D9E;
+  background-color: #5534A5;
 }	
 
 .menu {
@@ -75,7 +75,7 @@
 }
 
 .menu-item {
-  color: #e9d5ca;
+  color: #B3E8E5;
   font-size: 20px;
   margin-left: 30px;
   margin-top: 20px;
@@ -84,5 +84,5 @@
 }
 
 .menu-item:hover {
-  color: #827397;
+  color: #79DAE8;
 }

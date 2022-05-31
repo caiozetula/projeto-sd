@@ -26,9 +26,6 @@ function CriarConta() {
           Entrar
         </Link>
       </div>
-      <div className="container-icon animate__animated animate__infinite animate__swing">
-        <img src={FormIcon} alt="Forms Icon" className="imagem-icon"/>
-      </div>
       <div className="container-forms animate__animated animate__fadeInDown">
         <div>
           <h2 className="titulo-forms">Realize seu cadastro</h2>
