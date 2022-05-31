@@ -1,0 +1,15 @@
+.container-icon {
+  z-index: 0;
+  position: fixed;
+  width: 20%;
+  margin-top: 10%;
+  margin-left: 5%;
+}
+
+.imagem-icon {
+  width: 100%;
+}
+
+.animate__animated.animate__swing {
+  --animate-duration: 6s;
+}
