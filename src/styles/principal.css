@@ -1,0 +1,47 @@
+.titulo-site {
+  color: #A85CF9;
+  line-height: 40px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 0px;
+  margin-left: 10px;
+  float: left;
+  width: 100px;
+}
+
+.container-geral {
+    height: 85vh;
+    float: left;
+    border-radius: 10px;
+    background-color: #565275;
+}
+
+.container-pessoas{
+    width: 20%;
+}
+
+.container-chat{
+    width: 35%;
+    margin-left: 1%;
+}
+
+.container-posts{
+    width: 43%;
+    margin-left: 1%;
+}
+
+.titulo-container{
+    background-color: #252142;
+    height: 30px;
+    margin-top: 0px;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.texto-titulo-container{
+    color: #B3E8E5;
+    line-height: 30px;
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 0px;
+    margin-left: 10px;
+}

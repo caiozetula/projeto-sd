@@ -1,1 +1,25 @@
-
+  .containers { 
+    padding: 20px;
+  }
+  
+  .frase-pagina{
+    width: 40%;
+    margin-left: 5%;
+    margin-top: 5%;
+    color: #B3E8E5;
+    font-size: 30px;
+    float: left;
+  }
+  
+  .texto-pagina{
+    margin-top: 0px;
+  }
+  
+  .cor-diferente{
+    color: #A85CF9;
+  }
+  
+  .animate__animated.animate__swing {
+    --animate-duration: 6s;
+  }
+  
