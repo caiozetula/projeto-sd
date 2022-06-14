@@ -9,6 +9,8 @@ function Principal() {
   const [listaPessoas, setListaPessoas] = useState([]);
   const [mensagens, setMensagens] = useState([]);
   const [textareaMsg, setTextareaMsg] = useState("");
+  const [textareaPost, setTextareaPost] = useState("");
+  const [charactersLeft, setCharactersLeft] = useState(0);
 
   function enviarMensagem() {
     // console.log("Enviando mensagem...");
@@ -51,7 +53,13 @@ function Principal() {
   }
 
   useEffect(() => {
+    let newSize = 140 - textareaPost.length;
+    setCharactersLeft(newSize);
+  }, [textareaPost])
+
+  useEffect(() => {
     setListaPessoas([]);
+    setCharactersLeft(140);
     carregarMensagens();
     let listaAux = [
       { nome: "Caio Silva" },
@@ -129,6 +137,51 @@ function Principal() {
         <div className="container-geral container-posts">
           <div className="titulo-container">
             <h2 className="texto-titulo-container">Posts</h2>
+          </div>
+          <div className="container-textarea-post">
+            <textarea
+              className="textarea-post"
+              placeholder="O que está acontecendo?"
+              rows={3}
+              cols={50}
+              maxLength={140}
+              value={textareaPost}
+              onChange={(e) => setTextareaPost(e.target.value)}
+            />
+            <div className="minicontainer-post">
+              <button
+                className="button-post"
+              // onClick={() => {
+              //   enviarMensagem();
+              // }}
+              >
+                Postar
+              </button>
+              {charactersLeft > 10 ?
+                <p className="characters-left">{charactersLeft}</p>
+                :
+                <p className="characters-left-ending">{charactersLeft}</p>
+              }
+            </div>
+          </div>
+          <div className="container-card-post">
+            <div className="card-post">
+              <div className="card-post-left-img">
+                <img
+                  className="icon-post"
+                  src={IconPessoa}
+                  alt="Minha Figura"
+                />
+              </div>
+              <div className="card-post-right-content">
+                <div className="card-post-header">
+                  <h3 className="card-username">Caio Souza</h3>
+                </div>
+                <div className="card-post-content">
+                  <p className="text-post-content">Algum post qualquer sobre algo da vida...</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

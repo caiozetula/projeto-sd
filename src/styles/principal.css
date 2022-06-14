@@ -86,10 +86,10 @@
   color: #f2ebe9;
 }
 
-
 .container-chat-texto {
   float: left;
   height: 15%;
+  width: 100%;
 }
 
 .textarea-mensagem {
@@ -124,7 +124,6 @@
   background-color: #5534a5;
 }
 
-
 .container-chat-mensagens {
   height: 80%;
   width: 100%;
@@ -134,26 +133,26 @@
   flex-direction: column;
 }
 
-.container-mensagem-enviada{
+.container-mensagem-enviada {
   margin-top: 10px;
   margin-left: 54%;
   width: 40%;
-  background-color: #728692;
+  background-color: #1363df;
   border-radius: 10px;
   padding: 10px;
 }
 
-.text-mensagem-enviada{
+.text-mensagem-enviada {
   font-size: 13px;
   margin-top: 0px;
   margin-bottom: 0px;
   font-weight: 200;
   width: 100%;
   text-align: right;
-  color:#f2ebe9;
+  color: #f2ebe9;
 }
 
-.container-mensagem-recebida{
+.container-mensagem-recebida {
   margin-right: 52%;
   margin-top: 10px;
   margin-left: 2%;
@@ -163,12 +162,113 @@
   padding: 10px;
 }
 
-.text-mensagem-recebida{
+.text-mensagem-recebida {
   font-size: 13px;
   margin-top: 0px;
   margin-bottom: 0px;
   font-weight: 200;
   width: 100%;
   text-align: left;
-  color:#f2ebe9;
+  color: #f2ebe9;
+}
+
+.textarea-post {
+  float: left;
+  resize: none;
+  overflow-y: auto;
+  margin-left: 2%;
+  margin-top: 2%;
+  width: 80%;
+  font-family: "Sora", sans-serif;
+  background-color: #f2ebe9;
+  border-radius: 10px;
+}
+
+.container-textarea-post {
+  background-color: #252142;
+  height: 85px;
+  width: 100%;
+}
+
+.minicontainer-post {
+  float: left;
+  margin-top: 12px;
+  margin-left: 2%;
+}
+
+.button-post {
+  background-color: #a85cf9;
+  color: white;
+  font-weight: 600;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 10px;
+  border-style: none;
+  margin-top: 0px;
+  width: 70px;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.15);
+}
+
+.button-post:hover {
+  cursor: pointer;
+  background-color: #5534a5;
+}
+
+.characters-left {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #f2ebe9af;
+}
+
+.characters-left-ending {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #f66b0e;
+}
+
+.container-card-post {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.card-post {
+  float: left;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.card-post-left-img{
+  float: left;
+  width: 10%;
+}
+
+.card-post-right-content{
+  float: left;
+  width: 80%;
+}
+
+.card-username {
+  color: #f2ebe9;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+.icon-post {
+  margin-top: 10px;
+  margin-left: 30%;
+  width: 30px;
+  border-radius: 15px;
+  float: left;
+}
+
+.text-post-content {
+  color: #f2ebe9;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-width: 100%;
 }
