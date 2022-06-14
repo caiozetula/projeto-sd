@@ -1,5 +1,5 @@
 .titulo-site {
-  color: #a85cf9;
+  color: var(--emphasis-color);
   line-height: 40px;
   font-size: 20px;
   font-weight: 600;
@@ -13,7 +13,7 @@
   height: 85vh;
   float: left;
   border-radius: 10px;
-  background-color: #565275;
+  background-color: var(--tertiary-color);
 }
 
 .container-pessoas {
@@ -31,14 +31,15 @@
 }
 
 .titulo-container {
-  background-color: #252142;
+  background-color: var(--secondary-color);
   height: 5%;
+  min-height: 26px;
   margin-top: 0px;
   border-radius: 10px 10px 0px 0px;
 }
 
 .texto-titulo-container {
-  color: #b3e8e5;
+  color: var(--text-color-primary);
   font-size: 24px;
   font-weight: 500;
   margin-top: 0px;
@@ -76,14 +77,14 @@
   width: 65%;
   vertical-align: middle;
   line-height: 50px;
-  color: #f2ebe9;
+  color: var(--text-color-primary);
   float: left;
 }
 
 .texto-vazio {
   font-size: 18px;
   text-align: center;
-  color: #f2ebe9;
+  color: var(--text-color-primary);
 }
 
 .container-chat-texto {
@@ -100,14 +101,14 @@
   margin-top: 2%;
   width: 75%;
   font-family: "Sora", sans-serif;
-  background-color: #f2ebe9;
+  background-color: var(--text-color-primary);
   border-radius: 10px;
 }
 
 .button-enviar {
   float: left;
-  background-color: #a85cf9;
-  color: white;
+  background-color: var(--emphasis-color);
+  color: var(--text-color-primary);
   font-weight: 600;
   padding: 10px;
   font-size: 15px;
@@ -121,7 +122,7 @@
 
 .button-enviar:hover {
   cursor: pointer;
-  background-color: #5534a5;
+  background-color: var(--emphasis-color-selected);
 }
 
 .container-chat-mensagens {
@@ -137,7 +138,7 @@
   margin-top: 10px;
   margin-left: 54%;
   width: 40%;
-  background-color: #1363df;
+  background-color: var(--emphasis-color);
   border-radius: 10px;
   padding: 10px;
 }
@@ -149,7 +150,7 @@
   font-weight: 200;
   width: 100%;
   text-align: right;
-  color: #f2ebe9;
+  color: var(--text-color-primary);
 }
 
 .container-mensagem-recebida {
@@ -157,7 +158,7 @@
   margin-top: 10px;
   margin-left: 2%;
   width: 40%;
-  background-color: #252142;
+  background-color: var(--secondary-color);
   border-radius: 10px;
   padding: 10px;
 }
@@ -169,7 +170,7 @@
   font-weight: 200;
   width: 100%;
   text-align: left;
-  color: #f2ebe9;
+  color: var(--text-color-primary);
 }
 
 .textarea-post {
@@ -180,13 +181,14 @@
   margin-top: 2%;
   width: 80%;
   font-family: "Sora", sans-serif;
-  background-color: #f2ebe9;
+  background-color: var(--text-color-primary);
   border-radius: 10px;
 }
 
 .container-textarea-post {
-  background-color: #252142;
-  height: 85px;
+  background-color: var(--secondary-color);
+  height: 16%;
+  min-height: 85px;
   width: 100%;
 }
 
@@ -197,7 +199,7 @@
 }
 
 .button-post {
-  background-color: #a85cf9;
+  background-color: var(--emphasis-color);
   color: white;
   font-weight: 600;
   padding: 10px;
@@ -211,7 +213,7 @@
 
 .button-post:hover {
   cursor: pointer;
-  background-color: #5534a5;
+  background-color: var(--emphasis-color-selected);
 }
 
 .characters-left {
@@ -228,6 +230,7 @@
 
 .container-card-post {
   width: 100%;
+  height: 78%;
   overflow-y: auto;
 }
 
@@ -236,6 +239,10 @@
   width: 100%;
   padding-top: 5px;
   padding-bottom: 5px;
+  overflow-y: auto;
+  border-bottom-style: solid;
+  border-bottom-color: var(--secondary-color);
+  border-bottom-width: 1px;
 }
 
 .card-post-left-img{
@@ -245,11 +252,11 @@
 
 .card-post-right-content{
   float: left;
-  width: 80%;
+  width: 86%;
 }
 
 .card-username {
-  color: #f2ebe9;
+  color: var(--text-color-primary);
   font-size: 16px;
   font-weight: 600;
   margin-top: 10px;
@@ -257,7 +264,7 @@
 }
 
 .icon-post {
-  margin-top: 10px;
+  margin-top: 8px;
   margin-left: 30%;
   width: 30px;
   border-radius: 15px;
@@ -265,10 +272,11 @@
 }
 
 .text-post-content {
-  color: #f2ebe9;
+  width: 100%;
+  word-wrap: break-word;
+  color: var(--text-color-primary);
   font-size: 14px;
   font-weight: 400;
   margin-top: 10px;
   margin-bottom: 10px;
-  max-width: 100%;
 }

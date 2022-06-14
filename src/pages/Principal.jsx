@@ -1,17 +1,24 @@
 import "../styles/principal.css";
 import "../styles/main.css";
 import { Link } from "react-router-dom";
+import { Context } from "../resources/context";
+import { useEffect, useState, useContext } from "react";
 
 import IconPessoa from "../assets/icon-person.png";
-import { useEffect, useState } from "react";
-import io from 'socket.io-client';
+import io from "socket.io-client";
+import { criarPost } from "../resources/api";
 const chatAddrs = "http://localhost:5000";
+const lorem =
+  "enim sed faucibus turpis in eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra bibendum arcu vitae";
 
-function Principal({props}) {
+function Principal({ props }) {
+  const context = useContext(Context);
   const [listaPessoas, setListaPessoas] = useState([]);
   const [textareaMsg, setTextareaMsg] = useState("");
   const [msgArray, setMsgArray] = useState([]);
   const [displayMsg, setDisplayMsg] = useState();
+  const [postArray, setPostArray] = useState([]);
+  const [displayPost, setDisplayPost] = useState();
   let sala = "Mobile";
   const [textareaPost, setTextareaPost] = useState("");
   const [charactersLeft, setCharactersLeft] = useState(0);
@@ -28,13 +35,96 @@ function Principal({props}) {
       let auxArray = msgArray;
       auxArray.push(divMensagem);
       setMsgArray(auxArray);
-      updateDisplay();
+      updateDisplayMsg();
     }
   }
 
-  function updateDisplay(){
+  async function realizarPost() {
+    if (textareaPost.length > 0) {
+      console.log("Realizando post...");
+      let text = textareaPost;
+      setTextareaPost("");
+      let post = {
+        userId: context.userId,
+        desc: text,
+      };
+
+      console.log("Post: " + JSON.stringify(post));
+      const resp = await criarPost(post);
+      console.log("->Resposta do post:");
+      console.log(JSON.stringify(resp));
+
+      if (resp.status === 200) {
+        let divPost = (
+          <div className="card-post">
+            <div className="card-post-left-img">
+              <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
+            </div>
+            <div className="card-post-right-content">
+              <div className="card-post-header">
+                <h3 className="card-username">Caio Souza</h3>
+              </div>
+              <div className="card-post-content">
+                <p className="text-post-content">{text}</p>
+              </div>
+            </div>
+          </div>
+        );
+        let auxArray = postArray;
+        auxArray.unshift(divPost);
+        setPostArray(auxArray);
+        updadeDisplayPosts();
+      } else {
+        alert("Erro ao realizar post!");
+      }
+    } else {
+      alert("Por favor, escreva algo antes de enviar!");
+    }
+  }
+
+  function updateDisplayMsg() {
     let disp = <div>{msgArray}</div>;
     setDisplayMsg(disp);
+  }
+
+  function updadeDisplayPosts() {
+    let disp = <div>{postArray}</div>;
+    setDisplayPost(disp);
+  }
+
+  function carregarPosts() {
+    let post1 = (
+      <div className="card-post">
+        <div className="card-post-left-img">
+          <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
+        </div>
+        <div className="card-post-right-content">
+          <div className="card-post-header">
+            <h3 className="card-username">Caio Souza</h3>
+          </div>
+          <div className="card-post-content">
+            <p className="text-post-content">{lorem}</p>
+          </div>
+        </div>
+      </div>
+    );
+    let post2 = (
+      <div className="card-post">
+        <div className="card-post-left-img">
+          <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
+        </div>
+        <div className="card-post-right-content">
+          <div className="card-post-header">
+            <h3 className="card-username">Luis Soares</h3>
+          </div>
+          <div className="card-post-content">
+            <p className="text-post-content">Bom dia a todos!</p>
+          </div>
+        </div>
+      </div>
+    );
+    let arrayPosts = [post1, post2];
+    setPostArray(arrayPosts);
   }
 
   function carregarMensagens() {
@@ -51,24 +141,26 @@ function Principal({props}) {
 
     let mensagen3 = (
       <div className="container-mensagem-recebida">
-        <p className="text-mensagem-recebida">Já começou o projeto do cliente novo?</p>
+        <p className="text-mensagem-recebida">
+          Já começou o projeto do cliente novo?
+        </p>
       </div>
     );
-  
+
     let auxArray = [mensagem1, mensagen2, mensagen3];
     setMsgArray(auxArray);
-    updateDisplay();
   }
 
   useEffect(() => {
     let newSize = 140 - textareaPost.length;
     setCharactersLeft(newSize);
-  }, [textareaPost])
+  }, [textareaPost]);
 
   useEffect(() => {
     setListaPessoas([]);
     setCharactersLeft(140);
     carregarMensagens();
+    carregarPosts();
 
     let listaAux = [
       { nome: "Caio Silva" },
@@ -76,6 +168,7 @@ function Principal({props}) {
       { nome: "Time Dev Mobile" },
       { nome: "Time Dev Web" },
     ];
+
     setListaPessoas(listaAux);
   }, [props]);
 
@@ -160,38 +253,20 @@ function Principal({props}) {
             <div className="minicontainer-post">
               <button
                 className="button-post"
-              // onClick={() => {
-              //   enviarMensagem();
-              // }}
+                onClick={() => {
+                  realizarPost();
+                }}
               >
                 Postar
               </button>
-              {charactersLeft > 10 ?
+              {charactersLeft > 10 ? (
                 <p className="characters-left">{charactersLeft}</p>
-                :
+              ) : (
                 <p className="characters-left-ending">{charactersLeft}</p>
-              }
+              )}
             </div>
           </div>
-          <div className="container-card-post">
-            <div className="card-post">
-              <div className="card-post-left-img">
-                <img
-                  className="icon-post"
-                  src={IconPessoa}
-                  alt="Minha Figura"
-                />
-              </div>
-              <div className="card-post-right-content">
-                <div className="card-post-header">
-                  <h3 className="card-username">Caio Souza</h3>
-                </div>
-                <div className="card-post-content">
-                  <p className="text-post-content">Algum post qualquer sobre algo da vida...</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="container-card-post">{displayPost}</div>
         </div>
       </div>
     </div>

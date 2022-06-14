@@ -10,3 +10,14 @@ body {
 code {
   font-family: 'Sora', sans-serif;
 }
+
+:root{
+  --emphasis-color: #1363DF;
+  --emphasis-color-selected: #1251b1;
+  --background-color: #06283D;
+  --text-color-primary: #f2ebe9;
+  --text-color-secondary: #47B5FF;
+  --text-focus-primary: #47B5FF;
+  --secondary-color: #06113C;
+  --tertiary-color: #093e5f;
+}

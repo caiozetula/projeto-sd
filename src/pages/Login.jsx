@@ -4,9 +4,12 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { realizarLogin } from "../resources/api";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { Context } from "../resources/context";
 
 function Login() {
   let navigation = useNavigate();
+  const context = useContext(Context);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,8 +22,10 @@ function Login() {
       alert("Usuário ou senha inválidos");
     } else {
       let nomeUsuario = resp.msg.username;
+      context.setNome(nomeUsuario);
+      context.setUserId(resp.msg.id);
       localStorage.setItem("nomeUsuario", nomeUsuario);
-      alert("Login realizado com sucesso");
+      //alert("Login realizado com sucesso");
       navigation("/principal");
     }
   }

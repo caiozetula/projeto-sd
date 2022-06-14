@@ -1,5 +1,5 @@
 .container-principal {
-  background-color: #293462;
+  background-color: var(--background-color);
   min-height: 100vh;
   display: flexbox;
 }
@@ -9,7 +9,7 @@
   margin-top: 5%;
   width: 35%;
   margin-left: 8%; 
-  background-color: #565275;
+  background-color: var(--tertiary-color);
   border-radius: 10px;
   float: left;
   padding: 2%;
@@ -17,14 +17,14 @@
 }
 
 .titulo-forms{
-  color: #B3E8E5;
+  color: var(--text-color-primary);
   font-size: 28px;
   margin-bottom: 0px;
   margin-top: 0px;
 }
 
 .input-forms{
-  background-color: #b3e8e5;
+  background-color: var(--text-color-primary);
   font-size: 14px;
   border-style: none;
   border-radius: 10px;
@@ -36,19 +36,19 @@
 
 .input-forms:focus{
   outline: none;
-  background-color: #79DAE8;
+  background-color: var(--text-focus-primary);
 }	
 
 .label-forms{
-  color: #C4DDFF;
+  color: var(--text-color-secondary);
   margin-top: 2%;
   margin-bottom: 0px;
   font-size: 18px;
 }
 
 .button-forms{
-  background-color: #A85CF9;
-  color: white;
+  background-color: var(--emphasis-color);
+  color: var(--text-color-primary);
   font-weight: 600;
   width: 35%;
   padding: 10px;
@@ -62,11 +62,11 @@
 
 .button-forms:hover{
   cursor: pointer;
-  background-color: #5534A5;
+  background-color: var(--emphasis-color-selected);
 }	
 
 .menu {
-  background-color: #252142;
+  background-color: var(--secondary-color);
   height: 40px;
   line-height: 40px;
   width: 100%;
@@ -74,7 +74,7 @@
 }
 
 .menu-item {
-  color: #B3E8E5;
+  color: var(--text-color-primary);
   font-size: 20px;
   margin-left: 30px;
   margin-top: 20px;
@@ -83,5 +83,5 @@
 }
 
 .menu-item:hover {
-  color: #79DAE8;
+  color: var(--text-focus-primary);
 }

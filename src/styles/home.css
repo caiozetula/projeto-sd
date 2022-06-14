@@ -28,19 +28,19 @@ html {
 }
 
 .titulo {
-  color: #A85CF9;
+  color: var(--emphasis-color);
   font-size: 100px;
   font-weight: 700;
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: var(--secondary-color);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text-color-primary);
 }
 
 .animate__animated.animate__pulse {
