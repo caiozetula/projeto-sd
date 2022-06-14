@@ -6,14 +6,61 @@ import IconPessoa from "../assets/icon-person.png";
 import { useEffect, useState } from "react";
 
 function Principal() {
-
   const [listaPessoas, setListaPessoas] = useState([]);
+  const [mensagens, setMensagens] = useState([]);
+  const [textareaMsg, setTextareaMsg] = useState("");
+
+  function enviarMensagem() {
+    // console.log("Enviando mensagem...");
+    // console.log(textareaMsg);
+    if (textareaMsg.length > 0) {
+      let divMensagem = (
+        <div className="container-mensagem-enviada">
+          <p className="text-mensagem-enviada">{textareaMsg}</p>
+        </div>
+      );
+      let novaDiv = (
+        <div>
+          {mensagens}
+          {divMensagem}
+        </div>
+      );
+      setMensagens(novaDiv);
+    }
+  }
+
+  function carregarMensagens() {
+    let mensagensEnviadas = (
+      <div className="container-mensagem-enviada">
+        <p className="text-mensagem-enviada">E ta tudo bem!</p>
+      </div>
+    );
+    let mensagensRecebidas = (
+      <div className="container-mensagem-recebida">
+        <p className="text-mensagem-recebida">É sobre isso...</p>
+      </div>
+    );
+
+    let mensagensArray = (
+      <div>
+        {mensagensEnviadas}
+        {mensagensRecebidas}
+      </div>
+    );
+    setMensagens(mensagensArray);
+  }
 
   useEffect(() => {
     setListaPessoas([]);
-    let listaAux = [{ nome: "Caio Zetula" }, { nome: "Luis Soares" }, { nome: "Fernando" }];
+    carregarMensagens();
+    let listaAux = [
+      { nome: "Caio Silva" },
+      { nome: "Luis Soares" },
+      { nome: "Time Dev Mobile" },
+      { nome: "Time Dev Web" },
+    ];
     setListaPessoas(listaAux);
-  }, [])
+  }, []);
 
   return (
     <div className="container-principal">
@@ -29,27 +76,56 @@ function Principal() {
           <div className="titulo-container">
             <h2 className="texto-titulo-container">Pessoas & Grupos</h2>
             <div className="container-lista-pessoas">
-              {listaPessoas.length > 0 ?
-                listaPessoas.map(pessoa => {
+              {listaPessoas.length > 0 ? (
+                listaPessoas.map((pessoa) => {
                   return (
                     <div className="item-lista-pessoas">
-                      <img className="icon-pessoa" src={IconPessoa} alt="Minha Figura" />
+                      <img
+                        className="icon-pessoa"
+                        src={IconPessoa}
+                        alt="Minha Figura"
+                      />
                       <h3 className="texto-nome-pessoa">{pessoa.nome}</h3>
                     </div>
                   );
                 })
-                :
+              ) : (
                 <h3 className="texto-vazio">Lista Vazia</h3>
-              }
+              )}
             </div>
           </div>
         </div>
 
+        {/* TELA CHAT */}
         <div className="container-geral container-chat">
           <div className="titulo-container">
             <h2 className="texto-titulo-container">Chat</h2>
           </div>
+
+          <div className="container-chat-mensagens">
+            <div>{mensagens}</div>
+          </div>
+          <div className="container-chat-texto">
+            <textarea
+              className="textarea-mensagem"
+              placeholder="Mensagem"
+              rows={3}
+              cols={50}
+              value={textareaMsg}
+              onChange={(e) => setTextareaMsg(e.target.value)}
+            />
+            <button
+              className="button-enviar"
+              onClick={() => {
+                enviarMensagem();
+              }}
+            >
+              Enviar
+            </button>
+          </div>
         </div>
+
+        {/* TELA POSTS */}
         <div className="container-geral container-posts">
           <div className="titulo-container">
             <h2 className="texto-titulo-container">Posts</h2>

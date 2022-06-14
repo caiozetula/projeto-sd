@@ -3,8 +3,10 @@ import "../styles/main.css";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { realizarLogin } from "../resources/api";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  let navigation = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,6 +19,7 @@ function Login() {
       alert("Usuário ou senha inválidos");
     } else {
       alert("Login realizado com sucesso");
+      navigation("/principal");
     }
   }
 
