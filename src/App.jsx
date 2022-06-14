@@ -9,12 +9,12 @@ import Principal from "./pages/Principal";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={ <Home/> } path="/" exact />
-        <Route element={ <Login/> } path="/login" />
-        <Route element={ <CriarConta/> } path="/criarConta" />
-        <Route element={ <Principal/> } path="/principal" />
-      </Routes>
+        <Routes>
+          <Route element={<Home />} path="/" exact />
+          <Route element={<Login />} path="/login" />
+          <Route element={<CriarConta />} path="/criarConta" />
+          <Route element={<Principal />} path="/principal" />
+        </Routes>
     </BrowserRouter>
   );
 }

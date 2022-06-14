@@ -3,11 +3,13 @@ import "../styles/main.css";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { criarConta } from "../resources/api";
+import { useNavigate } from "react-router-dom";
 
 function CriarConta() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  let navigation = useNavigate();
 
  async function cadastrar() {
     const credentials = {username, email, password};
@@ -18,6 +20,7 @@ function CriarConta() {
       alert("Não foi possível criar a conta!");
     } else {
       alert("Conta criada com sucesso!");
+      navigation("/login");
     }
   };
 

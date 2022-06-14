@@ -4,14 +4,18 @@ import { Link } from "react-router-dom";
 
 import IconPessoa from "../assets/icon-person.png";
 import { useEffect, useState } from "react";
+import io from 'socket.io-client';
+const chatAddrs = "http://localhost:5000";
 
-function Principal() {
+function Principal({props}) {
   const [listaPessoas, setListaPessoas] = useState([]);
-  const [mensagens, setMensagens] = useState([]);
   const [textareaMsg, setTextareaMsg] = useState("");
+  const [msgArray, setMsgArray] = useState([]);
+  const [displayMsg, setDisplayMsg] = useState();
+  let sala = "Mobile";
 
   function enviarMensagem() {
-    // console.log("Enviando mensagem...");
+    console.log("Enviando mensagem...");
     // console.log(textareaMsg);
     if (textareaMsg.length > 0) {
       let divMensagem = (
@@ -19,40 +23,45 @@ function Principal() {
           <p className="text-mensagem-enviada">{textareaMsg}</p>
         </div>
       );
-      let novaDiv = (
-        <div>
-          {mensagens}
-          {divMensagem}
-        </div>
-      );
-      setMensagens(novaDiv);
+      let auxArray = msgArray;
+      auxArray.push(divMensagem);
+      setMsgArray(auxArray);
+      updateDisplay();
     }
   }
 
+  function updateDisplay(){
+    let disp = <div>{msgArray}</div>;
+    setDisplayMsg(disp);
+  }
+
   function carregarMensagens() {
-    let mensagensEnviadas = (
+    let mensagem1 = (
       <div className="container-mensagem-enviada">
-        <p className="text-mensagem-enviada">E ta tudo bem!</p>
+        <p className="text-mensagem-enviada">Olá, tudo bem?</p>
       </div>
     );
-    let mensagensRecebidas = (
+    let mensagen2 = (
       <div className="container-mensagem-recebida">
-        <p className="text-mensagem-recebida">É sobre isso...</p>
+        <p className="text-mensagem-recebida">Tudo e com você?</p>
       </div>
     );
 
-    let mensagensArray = (
-      <div>
-        {mensagensEnviadas}
-        {mensagensRecebidas}
+    let mensagen3 = (
+      <div className="container-mensagem-recebida">
+        <p className="text-mensagem-recebida">Já começou o projeto do cliente novo?</p>
       </div>
     );
-    setMensagens(mensagensArray);
+  
+    let auxArray = [mensagem1, mensagen2, mensagen3];
+    setMsgArray(auxArray);
+    updateDisplay();
   }
 
   useEffect(() => {
     setListaPessoas([]);
     carregarMensagens();
+
     let listaAux = [
       { nome: "Caio Silva" },
       { nome: "Luis Soares" },
@@ -60,7 +69,7 @@ function Principal() {
       { nome: "Time Dev Web" },
     ];
     setListaPessoas(listaAux);
-  }, []);
+  }, [props]);
 
   return (
     <div className="container-principal">
@@ -103,7 +112,7 @@ function Principal() {
           </div>
 
           <div className="container-chat-mensagens">
-            <div>{mensagens}</div>
+            <div>{displayMsg}</div>
           </div>
           <div className="container-chat-texto">
             <textarea

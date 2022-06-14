@@ -14,10 +14,12 @@ function Login() {
     const credentials = {email, password};
     const resp = await realizarLogin(credentials);
     console.log("->Resposta do login:");
-    console.log(resp);
+    console.log(JSON.stringify(resp));
     if(resp.status !== 200){
       alert("Usuário ou senha inválidos");
     } else {
+      let nomeUsuario = resp.msg.username;
+      localStorage.setItem("nomeUsuario", nomeUsuario);
       alert("Login realizado com sucesso");
       navigation("/principal");
     }
