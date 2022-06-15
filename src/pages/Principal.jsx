@@ -3,10 +3,14 @@ import "../styles/main.css";
 import { Link } from "react-router-dom";
 import { Context } from "../resources/context";
 import { useEffect, useState, useContext } from "react";
-
-import IconPessoa from "../assets/icon-person.png";
 import io from "socket.io-client";
 import { criarPost } from "../resources/api";
+
+import IconPessoa from "../assets/icon-person.png";
+import IconSearch from "../assets/icon-search.png";
+import IconAdd from "../assets/icon-add.png";
+import { Modal, Box } from "@mui/material";
+
 const chatAddrs = "http://localhost:5000";
 const lorem =
   "enim sed faucibus turpis in eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra bibendum arcu vitae";
@@ -16,12 +20,16 @@ function Principal({ props }) {
   const [listaPessoas, setListaPessoas] = useState([]);
   const [textareaMsg, setTextareaMsg] = useState("");
   const [msgArray, setMsgArray] = useState([]);
-  const [displayMsg, setDisplayMsg] = useState();
+  const [displayMsg, setDisplayMsg] = useState(null);
   const [postArray, setPostArray] = useState([]);
-  const [displayPost, setDisplayPost] = useState();
-  let sala = "Mobile";
+  const [displayPost, setDisplayPost] = useState(null);
   const [textareaPost, setTextareaPost] = useState("");
   const [charactersLeft, setCharactersLeft] = useState(0);
+  const [showModalSearch, setShowModalSearch] = useState(false);
+  const [modalSearchTxt, setModalSearchTxt] = useState("");
+  const [showModalAdd, setShowModalAdd] = useState(false);
+  const [modalAddTxt, setModalAddTxt] = useState("");
+  let sala = "Mobile";
 
   function enviarMensagem() {
     console.log("Enviando mensagem...");
@@ -73,7 +81,7 @@ function Principal({ props }) {
         let auxArray = postArray;
         auxArray.unshift(divPost);
         setPostArray(auxArray);
-        updadeDisplayPosts();
+        updateDisplayPosts();
       } else {
         alert("Erro ao realizar post!");
       }
@@ -82,12 +90,34 @@ function Principal({ props }) {
     }
   }
 
+  function entrarSala() {
+    if (modalSearchTxt.length === 0) {
+      alert("Insira o nome da sala!");
+      return;
+    } else {
+      console.log("Entrando na sala: " + modalSearchTxt);
+      setShowModalSearch(false);
+      setModalSearchTxt("");
+    }
+  }
+
+  function criarSala() {
+    if (modalAddTxt.length === 0) {
+      alert("Insira o nome da sala!");
+      return;
+    } else {
+      console.log("Entrando na sala: " + modalAddTxt);
+      setShowModalAdd(false);
+      setModalAddTxt("");
+    }
+  }
+
   function updateDisplayMsg() {
     let disp = <div>{msgArray}</div>;
     setDisplayMsg(disp);
   }
 
-  function updadeDisplayPosts() {
+  function updateDisplayPosts() {
     let disp = <div>{postArray}</div>;
     setDisplayPost(disp);
   }
@@ -125,6 +155,7 @@ function Principal({ props }) {
     );
     let arrayPosts = [post1, post2];
     setPostArray(arrayPosts);
+    updateDisplayPosts();
   }
 
   function carregarMensagens() {
@@ -149,6 +180,7 @@ function Principal({ props }) {
 
     let auxArray = [mensagem1, mensagen2, mensagen3];
     setMsgArray(auxArray);
+    updateDisplayMsg();
   }
 
   useEffect(() => {
@@ -163,45 +195,86 @@ function Principal({ props }) {
     carregarPosts();
 
     let listaAux = [
-      { nome: "Caio Silva" },
-      { nome: "Luis Soares" },
-      { nome: "Time Dev Mobile" },
       { nome: "Time Dev Web" },
+      { nome: "Time Dev Mobile" },
+      { nome: "Backend" },
+      { nome: "Squad Sonserina" },
     ];
 
+    setShowModalSearch(false);
+    setShowModalAdd(false);
     setListaPessoas(listaAux);
-  }, [props]);
+  }, []);
 
   return (
+
     <div className="container-principal">
+      <Modal
+        open={showModalSearch}
+        onClose={() => setShowModalSearch(false)}
+      >
+        <Box className="box-modal">
+          <div className="modal-title">
+            <h3 className="modal-title-text">Entrar em uma sala...</h3>
+          </div>
+          <div className="modal-input">
+            <input className="modal-input-text" type="text" placeholder="Nome da sala" value={modalSearchTxt} onChange={e => { setModalSearchTxt(e.target.value) }}></input>
+            <button className="modal-input-button" onClick={() => { entrarSala() }}>Entrar</button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={showModalAdd}
+        onClose={() => setShowModalAdd(false)}
+      >
+        <Box className="box-modal">
+          <div className="modal-title">
+            <h3 className="modal-title-text">Criar uma sala...</h3>
+          </div>
+          <div className="modal-input">
+            <input className="modal-input-text" type="text" placeholder="Nome da sala" value={modalAddTxt} onChange={e => { setModalAddTxt(e.target.value) }}></input>
+            <button className="modal-input-button" onClick={() => { criarSala() }}>Criar</button>
+          </div>
+        </Box>
+      </Modal>
       <div className="menu">
         <p className="titulo-site">WorkSpace</p>
-        <Link to="/" className="menu-item">
-          Sair
-        </Link>
+        <div className="header-content">
+          <Link to="/" className="menu-button-sair">
+            Sair
+          </Link>
+          <p className="user-name-header">Nome Usuário</p>
+          <img className="avatar-user-header" src={IconPessoa} alt="Avatar do usuário" ></img>
+        </div>
       </div>
       <div className="containers">
         {/* TELA PESSOAS */}
         <div className="container-geral container-pessoas">
           <div className="titulo-container">
-            <h2 className="texto-titulo-container">Pessoas & Grupos</h2>
-            <div className="container-lista-pessoas">
-              {listaPessoas.length > 0 ? (
-                listaPessoas.map((pessoa) => {
-                  return (
-                    <div className="item-lista-pessoas">
-                      <img
-                        className="icon-pessoa"
-                        src={IconPessoa}
-                        alt="Minha Figura"
-                      />
-                      <h3 className="texto-nome-pessoa">{pessoa.nome}</h3>
-                    </div>
-                  );
-                })
-              ) : (
-                <h3 className="texto-vazio">Lista Vazia</h3>
-              )}
+            <h2 className="texto-titulo-container">Salas</h2>
+            <div style={{ display: "inline-block", width: "100%" }}>
+              <div className="container-search-room">
+                <button className="button-search-add button-search" onClick={() => setShowModalSearch(true)}><img className="icons-search-add" src={IconSearch} alt="Ícone pesquisar"></img></button>
+                <button className="button-search-add button-add" onClick={() => setShowModalAdd(true)}><img className="icons-search-add" src={IconAdd} alt="Ícone adicionar"></img></button>
+              </div>
+              <div className="container-lista-pessoas">
+                {listaPessoas.length > 0 ? (
+                  listaPessoas.map((pessoa) => {
+                    return (
+                      <div className="item-lista-pessoas">
+                        <img
+                          className="icon-pessoa"
+                          src={IconPessoa}
+                          alt="Minha Figura"
+                        />
+                        <h3 className="texto-nome-pessoa">{pessoa.nome}</h3>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <h3 className="texto-vazio">Lista Vazia</h3>
+                )}
+              </div>
             </div>
           </div>
         </div>

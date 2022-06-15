@@ -34,3 +34,37 @@
 .animate__animated.animate__swing {
   --animate-duration: 6s;
 }
+
+.miniconainer-photo{
+  margin-top: 10px;
+  display: flex;
+}
+
+.icon-avatar{
+  display: flex;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 60px;
+}
+
+.icon-camera{
+  filter: invert();
+  height: 100%;
+}
+
+.button-camera{
+  cursor: pointer;
+  position: absolute;
+  margin-top: 80px;
+  margin-left: 100px;
+  height: 40px;
+  border-radius: 10px;
+  border-style: none;
+  background-color: var(--emphasis-color);
+}
+
+.button-camera:hover{
+  background-color: var(--emphasis-color-selected);
+}
+
