@@ -22,9 +22,12 @@ function Login() {
       alert("Usuário ou senha inválidos");
     } else {
       let nomeUsuario = resp.msg.username;
+      let email = resp.msg.email;
       context.setNome(nomeUsuario);
       context.setUserId(resp.msg.id);
+      context.setEmail(resp.msg.email);
       localStorage.setItem("nomeUsuario", nomeUsuario);
+      localStorage.setItem("email", email);
       //alert("Login realizado com sucesso");
       navigation("/principal");
     }

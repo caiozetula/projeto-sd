@@ -117,7 +117,7 @@
 }
 
 .button-add{
-  margin-left: 70%;
+  margin-left: 65%;
 }
 
 .item-lista-pessoas {
@@ -197,7 +197,6 @@
   height: 80%;
   width: 100%;
   overflow-y: auto;
-  display: flex;
   justify-content: flex-end;
   flex-direction: column;
 }
@@ -217,6 +216,7 @@
   margin-bottom: 0px;
   font-weight: 200;
   width: 100%;
+  word-break: break-word;
   text-align: right;
   color: var(--text-color-primary);
 }
@@ -237,7 +237,17 @@
   margin-bottom: 0px;
   font-weight: 200;
   width: 100%;
+  word-break: break-word;
   text-align: left;
+  color: var(--text-color-primary);
+}
+
+.user-mensagem-recebida{
+  font-weight: 400;
+  font-size: 13px;
+  text-align: left;
+  margin-top: 0px;
+  margin-bottom: 0px;
   color: var(--text-color-primary);
 }
 
@@ -403,4 +413,30 @@
 
 .modal-input-button:hover{
   background-color: var(--emphasis-color-selected);
+}
+
+.searchbar-input-text{
+  float: left;
+  font-size: 13px;
+  color: var(--text-color-primary);
+  margin-left: 30px;
+  margin-top: 10px;
+  background-color: transparent;
+  width: 20%;
+  height: 30px;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--emphasis-color);
+}
+
+.searchbar-input-button{
+  float: left;
+  cursor: pointer;
+  margin-top: 12.5px;
+  height: 25px;
+  border-style: none;
+  background-color: transparent;
 }

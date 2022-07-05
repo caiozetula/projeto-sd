@@ -4,16 +4,19 @@ import { Link } from "react-router-dom";
 import { Context } from "../resources/context";
 import { useEffect, useState, useContext } from "react";
 import io from "socket.io-client";
-import { criarPost } from "../resources/api";
+import {
+  criarPost,
+  getUsuario,
+  seguirUsuario,
+  getPostsTimeline,
+} from "../resources/api";
 
 import IconPessoa from "../assets/icon-person.png";
 import IconSearch from "../assets/icon-search.png";
 import IconAdd from "../assets/icon-add.png";
 import { Modal, Box } from "@mui/material";
 
-const chatAddrs = "http://localhost:5000";
-const lorem =
-  "enim sed faucibus turpis in eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra bibendum arcu vitae";
+const socket = io("http://localhost:5000", { transports: ["websocket"] });
 
 function Principal({ props }) {
   const context = useContext(Context);
@@ -26,25 +29,94 @@ function Principal({ props }) {
   const [textareaPost, setTextareaPost] = useState("");
   const [charactersLeft, setCharactersLeft] = useState(0);
   const [showModalSearch, setShowModalSearch] = useState(false);
+  const [showModalSearchUser, setShowModalSearchUser] = useState(false);
   const [modalSearchTxt, setModalSearchTxt] = useState("");
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [modalAddTxt, setModalAddTxt] = useState("");
-  let sala = "Mobile";
+  const [respPesquisa, setRespPesquisa] = useState({ name: "", email: "" });
+
+  let sala = "JavaScript";
+
+  async function carregarDadosSalvos() {
+    context.setNome(localStorage.getItem("nomeUsuario"));
+    context.setEmail(localStorage.getItem("email"));
+  }
+
+  async function seguir() {
+    let body = {
+      isAdmin: true,
+      email: respPesquisa.email,
+    };
+
+    const resp = await seguirUsuario(context.email, body);
+    console.log(resp);
+    if (resp.status !== 200) {
+      alert(resp.msg);
+    } else {
+      alert(resp.msg);
+      setShowModalSearchUser(false);
+      setModalSearchTxt("");
+      setRespPesquisa({ name: "", email: "" });
+    }
+  }
+
+  async function pesquisarUsuario() {
+    const resp = await getUsuario(modalSearchTxt);
+    console.log(resp);
+    if (resp.status !== 200) {
+      alert("Usuário não encontrado!");
+    } else {
+      setRespPesquisa({
+        name: resp.msg.user.username,
+        email: resp.msg.user.email,
+      });
+      setShowModalSearchUser(true);
+    }
+  }
 
   function enviarMensagem() {
     console.log("Enviando mensagem...");
     // console.log(textareaMsg);
     if (textareaMsg.length > 0) {
-      let divMensagem = (
-        <div className="container-mensagem-enviada">
-          <p className="text-mensagem-enviada">{textareaMsg}</p>
-        </div>
-      );
-      let auxArray = msgArray;
-      auxArray.push(divMensagem);
-      setMsgArray(auxArray);
-      updateDisplayMsg();
+      socket.emit("chatMessage", textareaMsg);
     }
+  }
+
+  async function abrirSocket() {
+    let email = context.email;
+    console.log("Email: " + email);
+    console.log("Sala: " + sala);
+    socket.emit("joinRoom", { username: email, room: sala });
+    socket.on("roomUsers", ({ room, users }) => {
+      console.log(room);
+      console.log(users);
+    });
+
+    socket.on("message", (message) => {
+      console.log(message);
+      if (message.username === context.email) {
+        let divMensagem = (
+          <div className="container-mensagem-enviada">
+            <p className="text-mensagem-enviada">{message.text}</p>
+          </div>
+        );
+        let auxArray = msgArray;
+        auxArray.push(divMensagem);
+        setMsgArray(auxArray);
+        updateDisplayMsg();
+      } else {
+        let divMensagem = (
+          <div className="container-mensagem-recebida">
+            <p className="user-mensagem-recebida">{message.username}</p>
+            <p className="text-mensagem-recebida">{message.text}</p>
+          </div>
+        );
+        let auxArray = msgArray;
+        auxArray.push(divMensagem);
+        setMsgArray(auxArray);
+        updateDisplayMsg();
+      }
+    });
   }
 
   async function realizarPost() {
@@ -53,8 +125,9 @@ function Principal({ props }) {
       let text = textareaPost;
       setTextareaPost("");
       let post = {
-        userId: context.userId,
+        userId: context.email,
         desc: text,
+        isAdmin: true,
       };
 
       console.log("Post: " + JSON.stringify(post));
@@ -63,25 +136,7 @@ function Principal({ props }) {
       console.log(JSON.stringify(resp));
 
       if (resp.status === 200) {
-        let divPost = (
-          <div className="card-post">
-            <div className="card-post-left-img">
-              <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
-            </div>
-            <div className="card-post-right-content">
-              <div className="card-post-header">
-                <h3 className="card-username">Caio Souza</h3>
-              </div>
-              <div className="card-post-content">
-                <p className="text-post-content">{text}</p>
-              </div>
-            </div>
-          </div>
-        );
-        let auxArray = postArray;
-        auxArray.unshift(divPost);
-        setPostArray(auxArray);
-        updateDisplayPosts();
+        await carregarPosts();
       } else {
         alert("Erro ao realizar post!");
       }
@@ -122,66 +177,41 @@ function Principal({ props }) {
     setDisplayPost(disp);
   }
 
-  function carregarPosts() {
-    let post1 = (
-      <div className="card-post">
-        <div className="card-post-left-img">
-          <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
-        </div>
-        <div className="card-post-right-content">
-          <div className="card-post-header">
-            <h3 className="card-username">Caio Souza</h3>
+  async function carregarPosts() {
+    const resp = await getPostsTimeline(context.email);
+    console.log("USUARIO: " + context.email);
+
+    if (resp.status !== 200) {
+      alert("Erro ao carregar posts!");
+    } else {
+      let auxArray = resp.msg.reverse();
+      var arrayPosts = [];
+      auxArray.forEach((post) => {
+        let divPost = (
+          <div className="card-post">
+            <div className="card-post-left-img">
+              <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
+            </div>
+            <div className="card-post-right-content">
+              <div className="card-post-header">
+                <h3 className="card-username">{post.userId}</h3>
+              </div>
+              <div className="card-post-content">
+                <p className="text-post-content">{post.desc}</p>
+              </div>
+            </div>
           </div>
-          <div className="card-post-content">
-            <p className="text-post-content">{lorem}</p>
-          </div>
-        </div>
-      </div>
-    );
-    let post2 = (
-      <div className="card-post">
-        <div className="card-post-left-img">
-          <img className="icon-post" src={IconPessoa} alt="Minha Figura" />
-        </div>
-        <div className="card-post-right-content">
-          <div className="card-post-header">
-            <h3 className="card-username">Luis Soares</h3>
-          </div>
-          <div className="card-post-content">
-            <p className="text-post-content">Bom dia a todos!</p>
-          </div>
-        </div>
-      </div>
-    );
-    let arrayPosts = [post1, post2];
+        );
+        arrayPosts.push(divPost);
+      });
+    }
     setPostArray(arrayPosts);
+    //updateDisplayPosts();
+  }
+
+  useEffect(() => {
     updateDisplayPosts();
-  }
-
-  function carregarMensagens() {
-    let mensagem1 = (
-      <div className="container-mensagem-enviada">
-        <p className="text-mensagem-enviada">Olá, tudo bem?</p>
-      </div>
-    );
-    let mensagen2 = (
-      <div className="container-mensagem-recebida">
-        <p className="text-mensagem-recebida">Tudo e com você?</p>
-      </div>
-    );
-
-    let mensagen3 = (
-      <div className="container-mensagem-recebida">
-        <p className="text-mensagem-recebida">
-          Já começou o projeto do cliente novo?
-        </p>
-      </div>
-    );
-
-    let auxArray = [mensagem1, mensagen2, mensagen3];
-    setMsgArray(auxArray);
-    updateDisplayMsg();
-  }
+  }, [postArray])
 
   useEffect(() => {
     let newSize = 140 - textareaPost.length;
@@ -189,9 +219,8 @@ function Principal({ props }) {
   }, [textareaPost]);
 
   useEffect(() => {
-    setListaPessoas([]);
-    setCharactersLeft(140);
-    carregarMensagens();
+    if(context.email == null) return;
+
     carregarPosts();
 
     let listaAux = [
@@ -203,48 +232,129 @@ function Principal({ props }) {
 
     setShowModalSearch(false);
     setShowModalAdd(false);
+    setShowModalSearchUser(false);
     setListaPessoas(listaAux);
+    abrirSocket();
+  }, [context.email]);
+
+  useEffect(() => {
+    setCharactersLeft(140);
+    carregarDadosSalvos();
   }, []);
 
   return (
-
     <div className="container-principal">
-      <Modal
-        open={showModalSearch}
-        onClose={() => setShowModalSearch(false)}
-      >
+      <Modal open={showModalSearch} onClose={() => setShowModalSearch(false)}>
         <Box className="box-modal">
           <div className="modal-title">
             <h3 className="modal-title-text">Entrar em uma sala...</h3>
           </div>
           <div className="modal-input">
-            <input className="modal-input-text" type="text" placeholder="Nome da sala" value={modalSearchTxt} onChange={e => { setModalSearchTxt(e.target.value) }}></input>
-            <button className="modal-input-button" onClick={() => { entrarSala() }}>Entrar</button>
+            <input
+              className="modal-input-text"
+              type="text"
+              placeholder="Nome da sala"
+              value={modalSearchTxt}
+              onChange={(e) => {
+                setModalSearchTxt(e.target.value);
+              }}
+            ></input>
+            <button
+              className="modal-input-button"
+              onClick={() => {
+                entrarSala();
+              }}
+            >
+              Entrar
+            </button>
           </div>
         </Box>
       </Modal>
-      <Modal
-        open={showModalAdd}
-        onClose={() => setShowModalAdd(false)}
-      >
+      <Modal open={showModalAdd} onClose={() => setShowModalAdd(false)}>
         <Box className="box-modal">
           <div className="modal-title">
             <h3 className="modal-title-text">Criar uma sala...</h3>
           </div>
           <div className="modal-input">
-            <input className="modal-input-text" type="text" placeholder="Nome da sala" value={modalAddTxt} onChange={e => { setModalAddTxt(e.target.value) }}></input>
-            <button className="modal-input-button" onClick={() => { criarSala() }}>Criar</button>
+            <input
+              className="modal-input-text"
+              type="text"
+              placeholder="Nome da sala"
+              value={modalAddTxt}
+              onChange={(e) => {
+                setModalAddTxt(e.target.value);
+              }}
+            ></input>
+            <button
+              className="modal-input-button"
+              onClick={() => {
+                criarSala();
+              }}
+            >
+              Criar
+            </button>
+          </div>
+        </Box>
+      </Modal>
+      <Modal
+        open={showModalSearchUser}
+        onClose={() => setShowModalSearchUser(false)}
+      >
+        <Box className="box-modal">
+          <div className="modal-title">
+            <h3 className="modal-title-text">Pesquisa de usuário</h3>
+          </div>
+          <div className="modal-input">
+            <input
+              className="modal-input-text"
+              type="text"
+              value={respPesquisa.name}
+              contentEditable={false}
+            ></input>
+            <button
+              className="modal-input-button"
+              onClick={() => {
+                seguir();
+              }}
+            >
+              Seguir
+            </button>
           </div>
         </Box>
       </Modal>
       <div className="menu">
         <p className="titulo-site">WorkSpace</p>
+        <input
+          className="searchbar-input-text"
+          type="text"
+          placeholder="Digite o e-mail para pesquisar"
+          value={modalSearchTxt}
+          onChange={(e) => {
+            setModalSearchTxt(e.target.value);
+          }}
+        ></input>
+        <button
+          className="searchbar-input-button"
+          onClick={() => {
+            pesquisarUsuario();
+          }}
+        >
+          <img
+            className="icons-search-add"
+            src={IconSearch}
+            alt="Ícone pesquisar"
+          ></img>
+        </button>
         <div className="header-content">
           <Link to="/" className="menu-button-sair">
             Sair
           </Link>
-          <p className="user-name-header">Nome Usuário</p>
-          <img className="avatar-user-header" src={IconPessoa} alt="Avatar do usuário" ></img>
+          <p className="user-name-header">{context.nome}</p>
+          <img
+            className="avatar-user-header"
+            src={IconPessoa}
+            alt="Avatar do usuário"
+          ></img>
         </div>
       </div>
       <div className="containers">
@@ -254,8 +364,26 @@ function Principal({ props }) {
             <h2 className="texto-titulo-container">Salas</h2>
             <div style={{ display: "inline-block", width: "100%" }}>
               <div className="container-search-room">
-                <button className="button-search-add button-search" onClick={() => setShowModalSearch(true)}><img className="icons-search-add" src={IconSearch} alt="Ícone pesquisar"></img></button>
-                <button className="button-search-add button-add" onClick={() => setShowModalAdd(true)}><img className="icons-search-add" src={IconAdd} alt="Ícone adicionar"></img></button>
+                <button
+                  className="button-search-add button-search"
+                  onClick={() => setShowModalSearch(true)}
+                >
+                  <img
+                    className="icons-search-add"
+                    src={IconSearch}
+                    alt="Ícone pesquisar"
+                  ></img>
+                </button>
+                <button
+                  className="button-search-add button-add"
+                  onClick={() => setShowModalAdd(true)}
+                >
+                  <img
+                    className="icons-search-add"
+                    src={IconAdd}
+                    alt="Ícone adicionar"
+                  ></img>
+                </button>
               </div>
               <div className="container-lista-pessoas">
                 {listaPessoas.length > 0 ? (
