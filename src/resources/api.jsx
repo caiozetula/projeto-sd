@@ -69,3 +69,26 @@ export async function seguirUsuario(email, body){
         return dados;
     }
 }
+
+export async function likeDislike(postId, body){
+    try{
+        const resposta = await axios.put(enderecoApi + "/posts/" + postId + "/like", body);
+        const dados = {status: resposta.status, msg: resposta.data};
+        return dados;
+    }catch(e){
+        const dados = {status: 503, msg: e.toString()};
+        return dados;
+    }
+}
+
+export async function delePost(postId){
+    try{
+        const resposta = await axios.delete(enderecoApi + "/posts/" + postId);
+        const dados = {status: resposta.status, msg: resposta.data};
+        return dados;
+    }catch(e){
+        const dados = {status: 503, msg: e.toString()};
+        return dados;
+    }
+
+}

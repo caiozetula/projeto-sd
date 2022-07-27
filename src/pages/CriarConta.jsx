@@ -13,6 +13,7 @@ function CriarConta() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [base64, setBase64] = useState("");
   const [photoPreview, setPhotoPreview] = useState(null);
   const inputFile = useRef(null);
   let navigation = useNavigate();
@@ -26,8 +27,25 @@ function CriarConta() {
     setPhoto(e.target.files[0]);
   }
 
+  const onLoadImage = (fileString) => {
+    setBase64(fileString);
+    console.log(fileString);
+  }
+
   async function cadastrar() {
-    const credentials = { username, email, password };
+    let reader = new FileReader();
+    if(photo == null){
+      const credentials = { username, email, password, };
+      finalizarCadastro(credentials);
+    }else{
+      reader.readAsDataURL(photo);
+      reader.onload = () => {
+        onLoadImage(reader.result);
+      }
+    }
+  };
+
+  async function finalizarCadastro(credentials){
     const resp = await criarConta(credentials);
     console.log("->Resposta do criar conta:");
     console.log(resp);
@@ -37,7 +55,15 @@ function CriarConta() {
       alert("Conta criada com sucesso!");
       navigation("/login");
     }
-  };
+  }
+
+  useEffect(() => {
+    if(base64 == "") return;
+    console.log("profilePicture: " + base64);
+    const credentials = { username, email, password, profilePicture: base64 };
+    console.log("credentials: " + JSON.stringify(credentials));
+    finalizarCadastro(credentials);
+  }, [base64])
 
   useEffect(() => {
     if(!photo) return;

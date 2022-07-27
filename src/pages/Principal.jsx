@@ -9,12 +9,18 @@ import {
   getUsuario,
   seguirUsuario,
   getPostsTimeline,
+  likeDislike,
+  delePost,
 } from "../resources/api";
 
 import IconPessoa from "../assets/icon-person.png";
 import IconSearch from "../assets/icon-search.png";
 import IconAdd from "../assets/icon-add.png";
+import IconLike from "../assets/like.png";
+import IconDelete from "../assets/delete.png";
+import IconLikeOutline from "../assets/like-outline.png";
 import { Modal, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const socket = io("http://localhost:5000", { transports: ["websocket"] });
 
@@ -31,15 +37,23 @@ function Principal({ props }) {
   const [showModalSearch, setShowModalSearch] = useState(false);
   const [showModalSearchUser, setShowModalSearchUser] = useState(false);
   const [modalSearchTxt, setModalSearchTxt] = useState("");
+  const [modalSearchTxtUser, setModalSearchTxtUser] = useState("");
   const [showModalAdd, setShowModalAdd] = useState(false);
   const [modalAddTxt, setModalAddTxt] = useState("");
   const [respPesquisa, setRespPesquisa] = useState({ name: "", email: "" });
+  let navigation = useNavigate();
 
-  let sala = "JavaScript";
+  async function logout() {
+    localStorage.setItem("nomeUsuario", "");
+    localStorage.setItem("email", "");
+    localStorage.setItem("profilePicture", "");
+    navigation("/");
+  }
 
   async function carregarDadosSalvos() {
     context.setNome(localStorage.getItem("nomeUsuario"));
     context.setEmail(localStorage.getItem("email"));
+    context.setProfilePicture(localStorage.getItem("profilePicture"));
   }
 
   async function seguir() {
@@ -54,14 +68,15 @@ function Principal({ props }) {
       alert(resp.msg);
     } else {
       alert(resp.msg);
+      carregarPosts();
       setShowModalSearchUser(false);
-      setModalSearchTxt("");
+      setModalSearchTxtUser("");
       setRespPesquisa({ name: "", email: "" });
     }
   }
 
   async function pesquisarUsuario() {
-    const resp = await getUsuario(modalSearchTxt);
+    const resp = await getUsuario(modalSearchTxtUser);
     console.log(resp);
     if (resp.status !== 200) {
       alert("Usuário não encontrado!");
@@ -79,14 +94,15 @@ function Principal({ props }) {
     // console.log(textareaMsg);
     if (textareaMsg.length > 0) {
       socket.emit("chatMessage", textareaMsg);
+      setTextareaMsg("");
     }
   }
 
-  async function abrirSocket() {
+  async function abrirSocket(salaChat) {
     let email = context.email;
     console.log("Email: " + email);
-    console.log("Sala: " + sala);
-    socket.emit("joinRoom", { username: email, room: sala });
+    console.log("Sala: " + salaChat);
+    socket.emit("joinRoom", { username: email, room: salaChat });
     socket.on("roomUsers", ({ room, users }) => {
       console.log(room);
       console.log(users);
@@ -145,12 +161,43 @@ function Principal({ props }) {
     }
   }
 
+  async function like(postId) {
+    let body = {
+      userId: context.email,
+      isAdmin: true,
+    };
+
+    const resp = await likeDislike(postId, body);
+    if (resp.status !== 200) {
+      alert("Não foi possível curtir o post!");
+    } else {
+      await carregarPosts();
+    }
+  }
+
+  async function apagarPost(postId) {
+    const resp = await delePost(postId);
+    if (resp.status !== 200) {
+      alert("Não foi possível apagar o post!");
+    } else {
+      await carregarPosts();
+    }
+  }
+
   function entrarSala() {
     if (modalSearchTxt.length === 0) {
       alert("Insira o nome da sala!");
       return;
     } else {
       console.log("Entrando na sala: " + modalSearchTxt);
+      abrirSocket(modalSearchTxt);
+      let listaAux = listaPessoas;
+      let auxSala = {
+        nome: modalSearchTxt,
+        emUso: true,
+      };
+      listaAux.push(auxSala);
+      setListaPessoas(listaAux.reverse());
       setShowModalSearch(false);
       setModalSearchTxt("");
     }
@@ -162,6 +209,14 @@ function Principal({ props }) {
       return;
     } else {
       console.log("Entrando na sala: " + modalAddTxt);
+      abrirSocket(modalAddTxt);
+      let listaAux = listaPessoas;
+      let auxSala = {
+        nome: modalAddTxt,
+        emUso: true,
+      };
+      listaAux.push(auxSala);
+      setListaPessoas(listaAux.reverse());
       setShowModalAdd(false);
       setModalAddTxt("");
     }
@@ -187,6 +242,12 @@ function Principal({ props }) {
       let auxArray = resp.msg.reverse();
       var arrayPosts = [];
       auxArray.forEach((post) => {
+        let verifyLike = false;
+        post.likes.forEach((like) => {
+          if (like == context.email) {
+            verifyLike = true;
+          }
+        });
         let divPost = (
           <div className="card-post">
             <div className="card-post-left-img">
@@ -198,6 +259,33 @@ function Principal({ props }) {
               </div>
               <div className="card-post-content">
                 <p className="text-post-content">{post.desc}</p>
+              </div>
+              <div className="card-post-footer">
+                {verifyLike ? (
+                  <img
+                    className="icon-like"
+                    src={IconLike}
+                    alt="Like"
+                    onClick={() => like(post.id)}
+                  />
+                ) : (
+                  <img
+                    className="icon-like"
+                    src={IconLikeOutline}
+                    alt="Like"
+                    onClick={() => like(post.id)}
+                  />
+                )}
+                {/* <img className="icon-like" src={IconLikeOutline} alt="Like" /> */}
+                <p className="like-count">{post.likes.length - 1}</p>
+                {post.userId == context.email ? (
+                  <img
+                    className="icon-delete"
+                    src={IconDelete}
+                    alt="Delete"
+                    onClick={() => apagarPost(post.id)}
+                  />
+                ) : null}
               </div>
             </div>
           </div>
@@ -211,7 +299,7 @@ function Principal({ props }) {
 
   useEffect(() => {
     updateDisplayPosts();
-  }, [postArray])
+  }, [postArray]);
 
   useEffect(() => {
     let newSize = 140 - textareaPost.length;
@@ -219,22 +307,14 @@ function Principal({ props }) {
   }, [textareaPost]);
 
   useEffect(() => {
-    if(context.email == null) return;
+    if (context.email == null) return;
 
     carregarPosts();
-
-    let listaAux = [
-      { nome: "Time Dev Web" },
-      { nome: "Time Dev Mobile" },
-      { nome: "Backend" },
-      { nome: "Squad Sonserina" },
-    ];
-
     setShowModalSearch(false);
     setShowModalAdd(false);
     setShowModalSearchUser(false);
-    setListaPessoas(listaAux);
-    abrirSocket();
+    // setListaPessoas(listaAux);
+    //abrirSocket();
   }, [context.email]);
 
   useEffect(() => {
@@ -305,20 +385,35 @@ function Principal({ props }) {
             <h3 className="modal-title-text">Pesquisa de usuário</h3>
           </div>
           <div className="modal-input">
-            <input
-              className="modal-input-text"
-              type="text"
-              value={respPesquisa.name}
-              contentEditable={false}
-            ></input>
-            <button
-              className="modal-input-button"
-              onClick={() => {
-                seguir();
-              }}
+            <div
+              className="container-conjunto-modal"
+              style={{ marginTop: -20 }}
             >
-              Seguir
-            </button>
+              <p className="p-modal">Nome</p>
+              <input
+                className="modal-input-text-usuario"
+                type="text"
+                value={respPesquisa.name}
+                contentEditable={false}
+              ></input>
+            </div>
+            <div className="container-conjunto-modal" style={{ marginTop: 10 }}>
+              <p className="p-modal">E-mail</p>
+              <input
+                className="modal-input-text-usuario"
+                type="text"
+                value={respPesquisa.email}
+                contentEditable={false}
+              ></input>
+              <button
+                className="modal-input-button"
+                onClick={() => {
+                  seguir();
+                }}
+              >
+                Seguir
+              </button>
+            </div>
           </div>
         </Box>
       </Modal>
@@ -328,9 +423,9 @@ function Principal({ props }) {
           className="searchbar-input-text"
           type="text"
           placeholder="Digite o e-mail para pesquisar"
-          value={modalSearchTxt}
+          value={modalSearchTxtUser}
           onChange={(e) => {
-            setModalSearchTxt(e.target.value);
+            setModalSearchTxtUser(e.target.value);
           }}
         ></input>
         <button
@@ -346,15 +441,23 @@ function Principal({ props }) {
           ></img>
         </button>
         <div className="header-content">
-          <Link to="/" className="menu-button-sair">
+          <p onClick={() => logout()} className="menu-button-sair">
             Sair
-          </Link>
+          </p>
           <p className="user-name-header">{context.nome}</p>
-          <img
-            className="avatar-user-header"
-            src={IconPessoa}
-            alt="Avatar do usuário"
-          ></img>
+          {context.profilePicture == "" ? (
+            <img
+              className="avatar-user-header"
+              src={IconPessoa}
+              alt="Avatar do usuário"
+            ></img>
+          ) : (
+            <img
+              className="avatar-user-header"
+              src={context.profilePicture}
+              alt="Avatar do usuário"
+            ></img>
+          )}
         </div>
       </div>
       <div className="containers">
@@ -395,7 +498,21 @@ function Principal({ props }) {
                           src={IconPessoa}
                           alt="Minha Figura"
                         />
-                        <h3 className="texto-nome-pessoa">{pessoa.nome}</h3>
+                        {pessoa.emUso ? (
+                          <h3
+                            className="texto-nome-pessoa"
+                            style={{ fontWeight: 700 }}
+                          >
+                            {pessoa.nome}
+                          </h3>
+                        ) : (
+                          <h3
+                            className="texto-nome-pessoa"
+                            style={{ fontWeight: 400 }}
+                          >
+                            {pessoa.nome}
+                          </h3>
+                        )}
                       </div>
                     );
                   })

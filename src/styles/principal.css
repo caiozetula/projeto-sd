@@ -37,6 +37,10 @@
   float: right;
   font-size: 20px;
   text-decoration: none;
+  cursor: pointer;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  line-height: 50px;
   color: var(--text-color-primary);
 }
 
@@ -141,7 +145,6 @@
   margin-left: 10px;
   margin-bottom: 0px;
   font-size: 16px;
-  font-weight: 400;
   width: 65%;
   vertical-align: middle;
   line-height: 50px;
@@ -349,6 +352,36 @@
   float: left;
 }
 
+.card-post-footer{
+  width: 100%;
+}
+
+.icon-like{
+  filter: invert();
+  width: 16px;
+  float: left;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.icon-delete{
+  filter: invert();
+  width: 16px;
+  float: right;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.like-count{
+  font-size: 12px;
+  font-weight: 200;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 10px;
+  float: left;
+  color: var(--text-color-primary);
+}
+
 .text-post-content {
   width: 100%;
   word-wrap: break-word;
@@ -439,4 +472,33 @@
   height: 25px;
   border-style: none;
   background-color: transparent;
+}
+
+.p-modal{
+  color: var(--text-color-primary);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 40px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  float: left;
+}
+
+.container-conjunto-modal{
+  width: 100%;
+  float: left;
+  height: 40px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.modal-input-text-usuario{
+  float: left;
+  font-size: 20px;
+  background-color: var(--text-color-primary);
+  width: 60%;
+  height: 40px;
+  margin-left: 10px;
+  border-radius: 10px;
+  border-style: none;
 }

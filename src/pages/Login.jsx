@@ -26,8 +26,10 @@ function Login() {
       context.setNome(nomeUsuario);
       context.setUserId(resp.msg.id);
       context.setEmail(resp.msg.email);
+      context.setProfilePicture(resp.msg.profilePicture);
       localStorage.setItem("nomeUsuario", nomeUsuario);
       localStorage.setItem("email", email);
+      localStorage.setItem("profilePicture", resp.msg.profilePicture);
       //alert("Login realizado com sucesso");
       navigation("/principal");
     }
